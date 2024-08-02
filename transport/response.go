@@ -11,7 +11,7 @@ import (
 
 func (s Server) ResultError(ctx *gin.Context, err error) {
 	se := errors.FromError(err)
-	s.response(ctx, int(se.Code), err)
+	s.response(ctx, int(se.Code), se)
 }
 
 func (s Server) Result(ctx *gin.Context, code int, data interface{}) {
