@@ -40,6 +40,8 @@ func (s Server) SetGroupRoutes(middlewares map[string][]gin.HandlerFunc) {
 func (s Server) AddMethod(httpMethod, relativePath, operation string, handlers ...gin.HandlerFunc) {
 	if _, ok := s.groupRoutes[operation]; ok {
 		s.groupRoutes[operation].Handle(httpMethod, relativePath, handlers...)
+	} else {
+		s.groupRoutes[operation] = s.engine.Group("").Handle(httpMethod, relativePath, handlers...)
 	}
 }
 
