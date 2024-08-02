@@ -11,7 +11,7 @@ type Crypto struct {
 	PlainHeaderVal string `yaml:"plain_header_val" mapstructure:"plain_header_val"`
 }
 
-type GroupMiddlewares struct {
+type GroupMiddleware struct {
 	Middleware gin.HandlerFunc
 	Operations []string
 }
@@ -23,7 +23,7 @@ type Server struct {
 	addr        []string
 }
 
-func NewServer(engine *gin.Engine, groupMiddlewares []*GroupMiddlewares, addr []string) *Server {
+func NewServer(engine *gin.Engine, groupMiddlewares []*GroupMiddleware, addr []string) *Server {
 	if addr == nil || len(addr) == 0 {
 		panic("addr is required")
 	}
