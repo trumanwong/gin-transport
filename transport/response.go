@@ -9,17 +9,17 @@ import (
 	"github.com/trumanwong/gin-transport/transport/errors"
 )
 
-func (s Server) ResultError(ctx *gin.Context, err error) {
+func (s *Server) ResultError(ctx *gin.Context, err error) {
 	se := errors.FromError(err)
 	s.response(ctx, int(se.Code), se)
 }
 
-func (s Server) Result(ctx *gin.Context, code int, data interface{}) {
+func (s *Server) Result(ctx *gin.Context, code int, data interface{}) {
 	s.response(ctx, code, data)
 }
 
-func (s Server) response(ctx *gin.Context, code int, data interface{}) {
-	if !s.crypto.Enable || ctx.GetHeader(s.crypto.PlainHeaderKey) == s.crypto.PlainHeaderVal {
+func (s *Server) response(ctx *gin.Context, code int, data interface{}) {
+	if s.crypto == nil || ctx.GetHeader(s.crypto.PlainHeaderKey) == s.crypto.PlainHeaderVal {
 		ctx.JSON(code, gin.H{
 			"data": data,
 		})
