@@ -16,7 +16,6 @@ type Middleware func(ctx *gin.Context, operation string) error
 type Server struct {
 	engine      *gin.Engine
 	crypto      *Crypto
-	groupRoutes map[string]gin.IRoutes
 	addr        []string
 	middlewares []Middleware
 }
