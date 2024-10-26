@@ -11,43 +11,24 @@ type Crypto struct {
 	PlainHeaderVal string `yaml:"plain_header_val" mapstructure:"plain_header_val"`
 }
 
-type GroupMiddleware struct {
-	Middleware gin.HandlerFunc
-	Operations []string
-}
+type Middleware func(ctx *gin.Context, operation string) error
 
 type Server struct {
 	engine      *gin.Engine
 	crypto      *Crypto
 	groupRoutes map[string]gin.IRoutes
 	addr        []string
+	middlewares []Middleware
 }
 
-func NewServer(engine *gin.Engine, groupMiddlewares []*GroupMiddleware, addr []string) *Server {
+func NewServer(engine *gin.Engine, addr []string, middlewares []Middleware) *Server {
 	if addr == nil || len(addr) == 0 {
 		panic("addr is required")
-	}
-	m := make(map[string][]gin.HandlerFunc)
-	groupRoutes := make(map[string]gin.IRoutes)
-	if groupMiddlewares != nil {
-		for _, groupMiddleware := range groupMiddlewares {
-			for _, operation := range groupMiddleware.Operations {
-				if _, ok := m[operation]; !ok {
-					m[operation] = []gin.HandlerFunc{groupMiddleware.Middleware}
-				} else {
-					m[operation] = append(m[operation], groupMiddleware.Middleware)
-				}
-			}
-		}
-
-		for operation, vals := range m {
-			groupRoutes[operation] = engine.Group("").Use(vals...)
-		}
 	}
 	return &Server{
 		addr:        addr,
 		engine:      engine,
-		groupRoutes: groupRoutes,
+		middlewares: middlewares,
 	}
 }
 
@@ -55,12 +36,12 @@ func (s *Server) SetCrypto(crypto *Crypto) {
 	s.crypto = crypto
 }
 
-func (s *Server) AddMethod(httpMethod, relativePath, operation string, handlers ...gin.HandlerFunc) {
-	if _, ok := s.groupRoutes[operation]; ok {
-		s.groupRoutes[operation].Handle(httpMethod, relativePath, handlers...)
-	} else {
-		s.groupRoutes[operation] = s.engine.Group("").Handle(httpMethod, relativePath, handlers...)
-	}
+func (s *Server) AddMethod(httpMethod, relativePath string, handlers ...gin.HandlerFunc) {
+	s.engine.Group("").Handle(httpMethod, relativePath, handlers...)
+}
+
+func (s *Server) GetMiddlewares() []Middleware {
+	return s.middlewares
 }
 
 func (s *Server) Run() error {
