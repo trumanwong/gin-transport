@@ -21,13 +21,13 @@ func (s *Server) Result(ctx *gin.Context, code int, data interface{}) {
 func (s *Server) response(ctx *gin.Context, code int, data interface{}) {
 	if s.crypto == nil || ctx.GetHeader(s.crypto.PlainHeaderKey) == s.crypto.PlainHeaderVal {
 		ctx.JSON(code, gin.H{
-			"data": data,
+			"Data": data,
 		})
 		return
 	}
 	plaintext, _ := json.Marshal(data)
 	cipher, _ := cryptogo.AesCBCEncrypt(plaintext, []byte(s.crypto.AesKey), []byte(s.crypto.AesIv), paddings.PKCS7)
 	ctx.JSON(code, gin.H{
-		"data": base64.StdEncoding.EncodeToString(cipher),
+		"Data": base64.StdEncoding.EncodeToString(cipher),
 	})
 }
