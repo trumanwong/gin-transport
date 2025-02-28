@@ -1,4 +1,4 @@
-package transport
+package v2
 
 import (
 	"encoding/base64"
@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trumanwong/cryptogo"
 	"github.com/trumanwong/cryptogo/paddings"
-	"github.com/trumanwong/gin-transport/transport/errors"
+	"github.com/trumanwong/gin-transport/v2/transport/errors"
 )
 
 func (s *Server) ResultError(ctx *gin.Context, err error) {
