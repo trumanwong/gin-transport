@@ -20,9 +20,7 @@ func (s *Server) Result(ctx *gin.Context, code int, data interface{}) {
 
 func (s *Server) response(ctx *gin.Context, code int, data interface{}) {
 	if s.crypto == nil || ctx.GetHeader(s.crypto.PlainHeaderKey) == s.crypto.PlainHeaderVal {
-		ctx.JSON(code, gin.H{
-			"Data": data,
-		})
+		ctx.JSON(code, data)
 		return
 	}
 	plaintext, _ := json.Marshal(data)
